@@ -14,10 +14,10 @@ public class TraitementDonnees {
 		motsLexique = ld.motsLexique;
 	}
 
-	public int distanceLevenshtein(String f1, String f2) {
+	public int distanceLevenshtein(String mot1, String f1, String mot2, String f2) {
 
-		System.out.println(f1);
-		System.out.println(f2);
+		System.out.print(mot1+" ["+f1+"]");
+		System.out.print(" => "+mot2+" ["+f2+"] ");
 
 		String[] t1 = f1.split(" ");
 		String[] t2 = f2.split(" ");
@@ -48,19 +48,15 @@ public class TraitementDonnees {
 
 				tmp[i][j] = Math.min(Math.min(tmp[i - 1][j] + 1, tmp[i][j - 1] + 1), tmp[i - 1][j - 1] + m);
 				
-				
-				//faux de faire ça
+				//faux de faire ça, on l'utilise plus d'ailleurs
 				if(tmp[i][j]==0)action[i][j] = "correct";
-				else if(tmp[i][j]==sub)action[i][j] = "sub";
 				else if (tmp[i][j]==omi)action[i][j] = "omi";
 				else if(tmp[i][j]==inser)action[i][j] = "inser";
-			
-				
-
+				else if(tmp[i][j]==sub)action[i][j] = "sub";
 			}
 		}
 
-		
+		// ALGO UN
 		/*if (size1 >= size2) {
 			int previous = 0;
 			for (int i = 1; i <= size1; i++) {
@@ -93,26 +89,75 @@ public class TraitementDonnees {
 			}
 			
 		}*/
-		if(size1>=size2){
-		for (int i = 1; i <= size1; i++) {
-			int min = Integer.MAX_VALUE;
-			int x = 0;
-			int y = 0;
-			for (int j = 1; j <= size2; j++) {
-				if(tmp[i][j]<min){
-					min = tmp[i][j];
-					x = i;
-					y = j;
+		
+		
+		
+		// ALGO DEUX
+		/*if(size1>=size2){
+			for (int i = 1; i <= size1; i++) {
+				int min = Integer.MAX_VALUE;
+				int x = 0;
+				int y = 0;
+				for (int j = 1; j <= size2; j++) {
+					if(tmp[i][j]<min){
+						min = tmp[i][j];
+						x = i;
+						y = j;
+					}
+					
 				}
-				if(action[x][y].equals("sub"))System.out.print("("+f1[y]+"=>"+f2[x]);
-				else if(action[x][y].equals("omi"))System.out.print(" o (=>"+f1[y]+")");
-				else if(action[x][y].equals("inser"))System.out.print(" i (=>"+f2[x]+")");
+					if(action[x][y].equals("correct"))System.out.print(" c("+f1[x-1]+"=>"+f2[y-1]+")");
+					else if(action[x][y].equals("sub"))System.out.print(" s("+f1[x-1]+"=>"+f2[y-1]+")");
+					else if(action[x][y].equals("omi"))System.out.print(" o(=>"+f1[x-1]+")");
+					else if(action[x][y].equals("inser"))System.out.print(" i(=>"+f2[y-1]+")");
+				
+				
 			}
-			System.out.println("");
 		}
+		System.out.println("");*/
+		if(tmp[size1][size2]>0)System.out.print("Erreur "+tmp[size1][size2]+" <=> ");
+		else System.out.print("Correct "+tmp[size1][size2]+" <=> ");
+		
+		//ALGO TROIS QUI MARCHE
+		int j =0;
+		int i =0;
+		boolean fini = false;
+		while(!fini){
+			int haut=0;
+			int droite=0;
+			int diago=0;
+			if(i==size1 && j==size2)break;
+			if(i<size1 && j<size2)diago=tmp[i+1][j+1];
+			else diago = 500;
+			if(i<=size1 && j<size2)haut=tmp[i][j+1];
+			else haut = 500;
+			if(i<size1 && j<=size2)droite=tmp[i+1][j];
+			else droite = 500;
+		
+			
+			
+			int min = Math.min(haut, Math.min(diago, droite));
+			//System.out.print("| diago:"+diago+" haut:"+haut+" droite:"+droite+" ");
+			if(min == diago){
+				j++;
+				i++;
+				System.out.print(" s("+f1[i-1]+"=>"+f2[j-1]+")");
+				
+			}
+			else if(min == haut){
+				j++;
+				System.out.print(" i(=>"+f2[j-1]+")");
+				
+			}
+			else if(min == droite){
+				i++;
+				System.out.print(" o(=>"+f1[i-1]+")");
+				
+			}
+			else System.out.println("erreur");
+			
 		}
-		
-		
+		System.out.println("");
 		
 		
 		/*
@@ -120,6 +165,7 @@ public class TraitementDonnees {
 			for (int j = 1; j <= size1; j++) {
 			}
 		}*/
+		
 			
 		System.out.println("------------");
 		
@@ -134,6 +180,7 @@ public class TraitementDonnees {
 		String phonemesMotReconnu;
 		int nombreErreur = 0;
 		int nombreCorrect = 0;
+		System.out.println("pour chaque action : s = substitution o = omission i = insertion \n");
 		for (String motTest : this.motsTest.keySet()) {
 			ArrayList<String> phonemesMotTest = new ArrayList<>();
 			phonemesMotTest = this.motsTest.get(motTest);
@@ -156,7 +203,7 @@ public class TraitementDonnees {
 						 * +Integer.toString(distanceLevenshtein));
 						 * System.out.println(sb.toString());
 						 */
-						distanceLevenshtein = distanceLevenshtein(phonemesMotTest.get(i), phonemesMotLexique.get(j));
+						distanceLevenshtein = distanceLevenshtein(motTest,phonemesMotTest.get(i), motLexique,phonemesMotLexique.get(j));
 						if (distanceLevenshtein < minDistanceLevenshtein) {
 							minDistanceLevenshtein = distanceLevenshtein;
 							motReconnu = motLexique;
@@ -164,7 +211,7 @@ public class TraitementDonnees {
 						}
 					}
 				}
-				sb = new StringBuilder(motTest + " [" + phonemesMotTest.get(i) + "] => " + motReconnu + " ["
+				/*sb = new StringBuilder(motTest + " [" + phonemesMotTest.get(i) + "] => " + motReconnu + " ["
 						+ phonemesMotReconnu + "] ");
 				if (!motReconnu.equals(motTest)) {
 					sb.append("Erreur");
@@ -211,7 +258,7 @@ public class TraitementDonnees {
 						sb.append("(=>" + separatedPhonemesMotTest[j] + ") ");
 					}
 				}
-				System.out.println(sb.toString());
+				System.out.println(sb.toString());*/
 			}
 		}
 		System.out.println();

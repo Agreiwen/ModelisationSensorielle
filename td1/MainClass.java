@@ -27,7 +27,7 @@ public class MainClass {
 		td = new TraitementDonnees(ld);
 		System.out.println();
 		td.reconnaissanceLevenshtein();
-		System.out.println(td.distanceLevenshtein("m o a", "a m o a"));
+		//System.out.println(td.distanceLevenshtein("m o a", "a m o a"));
 	}
 
 	public static void main(String[] args) {

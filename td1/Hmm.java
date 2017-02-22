@@ -30,7 +30,7 @@ public class Hmm {
 
 	private double getCsub(String phonemetest, String phonemeref) {
 		//System.out.println("Phoneme ref recu : "+phonemeref+" phoneme test recu :"+phonemetest);
-		return -Math.log(psub)-Math.log(matriceTransition.get(phonemeref).get(phonemetest));
+		return -Math.log(psub)-Math.log(matriceTransition.get(phonemetest).get(phonemeref));
 		
 	}
 	

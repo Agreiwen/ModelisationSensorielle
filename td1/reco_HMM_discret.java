@@ -39,9 +39,9 @@ public class reco_HMM_discret {
 	}
 
 	public static void main(String[] args) {
-		String fichierTest = args[0];
-		String lexique = args[1];
-		String hmminit = args[2];
+		String lexique = args[0];
+		String hmminit = args[1];
+		String fichierTest = args[2];
 		new reco_HMM_discret(fichierTest, lexique, hmminit);
 	}
 

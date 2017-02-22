@@ -12,7 +12,7 @@ public class reco_dist_levenshtein {
 	
 	public reco_dist_levenshtein(String fichierTest, String lexique){
 		try {
-			System.setOut(new PrintStream(new File("reconnaissance.txt")));
+			System.setOut(new PrintStream(new File("reco_dist_levenshtein.txt")));
 		} catch (FileNotFoundException e1) {
 			e1.printStackTrace();
 		}

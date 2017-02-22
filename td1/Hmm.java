@@ -1,16 +1,13 @@
 package td1;
 
 import java.io.BufferedReader;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Map;
-import java.util.regex.Pattern;
 
 public class Hmm {
-	
+
 	HashMap<String, ArrayList<String>> motsTest;
 	HashMap<String, ArrayList<String>> motsLexique;
 	String affichageDistLeven = "";
@@ -19,31 +16,27 @@ public class Hmm {
 	protected double psub;
 	protected double pins;
 	protected double pomi;
+
 	protected HashMap<String, HashMap<String,Double>> matriceTransition;
 	
 	public Hmm(String fichierTest, LecteurDonnees ld) throws IOException{
-
 		motsTest = ld.motsTest;
 		motsLexique = ld.motsLexique;
 		lectureFichierTest(fichierTest);
 	}
 
 	private double getCsub(String phonemetest, String phonemeref) {
-		//System.out.println("Phoneme ref recu : "+phonemeref+" phoneme test recu :"+phonemetest);
-		return -Math.log(psub)-Math.log(matriceTransition.get(phonemetest).get(phonemeref));
-		
+		return -Math.log(psub) - Math.log(matriceTransition.get(phonemetest).get(phonemeref));
 	}
-	
+
 	private double getCins(String phoneme1test) {
-		return -Math.log(pins)-Math.log(matriceTransition.get(phoneme1test).get("<ins>"));
-		
+		return -Math.log(pins) - Math.log(matriceTransition.get(phoneme1test).get("<ins>"));
 	}
 
 	private double getComi() {
 		return -Math.log(pomi);
-		
 	}
-	
+
 	public double distanceLevenshtein(String mot1, String f1, String mot2, String f2) {
 		affichageDistLeven = "";
 		affichageDistLeven += mot1 + " [" + f1 + "]";
@@ -56,59 +49,49 @@ public class Hmm {
 
 	private void lectureFichierTest(String fichierTest) throws IOException {
 		String st = "";
-		String partie1 = "";
-		String partie2 = "";
 		String[] separated;
 		BufferedReader br;
 		String tab = ";";
-		ArrayList<String> nouvelleEntree;
-        @SuppressWarnings("unused")
-		Pattern pattern = Pattern.compile(tab);
-        br = new BufferedReader(new FileReader(fichierTest));
-        System.out.println("Lecture du fichier test... ");
-        
-        String nomproba = br.readLine();
-        String valeurproba = br.readLine();
-        separated = valeurproba.split(tab);
-        String psub = separated[0];
-        String pins = separated[1];
-        String pomi = separated[2];
-        this.psub = Double.parseDouble(psub);
-        this.pins = Double.parseDouble(pins);
-        this.pomi = Double.parseDouble(pomi);
-        String commentaire = br.readLine();
-        String coltableau = br.readLine();
-        String[] separated2 = coltableau.split(tab);
+		br = new BufferedReader(new FileReader(fichierTest));
+		System.out.print("Lecture du fichier modele HMM... ");
 
-        matriceTransition = new HashMap<>();
-        
-        for (int i = 1; i < separated2.length; i++) {
-        	HashMap<String,Double> matricetmp = new HashMap<>();
-        	for (int j = 1; j < separated2.length; j++) {
-        		matricetmp.put(separated2[j], 0.);
-        	}
-        	matriceTransition.put(separated2[i], matricetmp);
+		br.readLine();
+		String valeurproba = br.readLine();
+		separated = valeurproba.split(tab);
+		String psub = separated[0];
+		String pins = separated[1];
+		String pomi = separated[2];
+		this.psub = Double.parseDouble(psub);
+		this.pins = Double.parseDouble(pins);
+		this.pomi = Double.parseDouble(pomi);
+		br.readLine();
+		String coltableau = br.readLine();
+		String[] separated2 = coltableau.split(tab);
+
+		matriceTransition = new HashMap<>();
+
+		for (int i = 1; i < separated2.length; i++) {
+			HashMap<String, Double> matricetmp = new HashMap<>();
+			for (int j = 1; j < separated2.length; j++) {
+				matricetmp.put(separated2[j], 0.);
+			}
+			matriceTransition.put(separated2[i], matricetmp);
 		}
 
-        while ((st = br.readLine()) != null) {
-        	separated = st.split(tab);
-        	for (int i = 1; i < separated.length; i++) {
-        		
-        		    matriceTransition.get(separated2[i]).put(separated[0],Double.parseDouble(separated[i]));
-        		 //   System.out.println("Abscisse :"+separated2[i]+" Ordonnee :"+separated[0]+"  valeur :"+separated[i]);
-   				
+		while ((st = br.readLine()) != null) {
+			separated = st.split(tab);
+			for (int i = 1; i < separated.length; i++) {
+				matriceTransition.get(separated2[i]).put(separated[0], Double.parseDouble(separated[i]));
 			}
-    	}
-        System.out.println("Termine.");
-        br.close();
-		
+		}
+		System.out.println("Termine.");
+		br.close();
 	}
-	
-	
+
 	public double levenshteinCalcul(String[] f1, String[] f2) {
 		int size1 = f1.length;
 		int size2 = f2.length;
-		
+
 		double[][] tmp = new double[size1 + 1][size2 + 1];
 
 		for (int i = 0; i <= size1; i++) {
@@ -117,31 +100,19 @@ public class Hmm {
 		for (int j = 0; j <= size2; j++) {
 			tmp[0][j] = j;
 		}
-	/*	System.out.println("");
-		System.out.print("On compare: ");
-		for (int i = 1; i <= size1; i++) {
-			System.out.println("Taille"+size1);
-			System.out.print(f1[i-1]);
-		}
-		System.out.print(" et ");
-		for (int j = 1; j <= size2; j++) {
-			System.out.print(f2[j-1]);
-		}*/
-		//System.out.print("\n");
 		for (int i = 1; i <= size1; i++) {
 			for (int j = 1; j <= size2; j++) {
-				double m = getCsub(f1[i-1],f2[j-1]);
+				double m = getCsub(f1[i - 1], f2[j - 1]);
 				double omi = tmp[i - 1][j] + getComi();
-				double inser = tmp[i][j - 1] + getCins(f1[i-1]);
+				double inser = tmp[i][j - 1] + getCins(f1[i - 1]);
 				double sub = tmp[i - 1][j - 1] + m;
 				tmp[i][j] = Math.min(Math.min(omi, inser), sub);
 			}
 		}
 
-		if (tmp[size1][size2] > 0){
+		if (tmp[size1][size2] > 0) {
 			affichageDistLeven += "Erreur " + tmp[size1][size2] + " <=> ";
-		}
-		else{
+		} else {
 			affichageDistLeven += "Correct " + tmp[size1][size2] + " <=> ";
 		}
 
@@ -185,15 +156,15 @@ public class Hmm {
 		return tmp[size1][size2];
 	}
 
-	
 	public void reconnaissanceLevenshtein() {
 		double distanceLevenshtein;
 		double minDistanceLevenshtein;
 		String motReconnu;
+		@SuppressWarnings("unused")
 		String phonemesMotReconnu = "";
 		int nombreErreur = 0;
 		int nombreCorrect = 0;
-		System.out.println("pour chaque action : s = substitution o = omission i = insertion \n");
+		System.out.println("\nPour chaque action : s = substitution o = omission i = insertion \n");
 		for (String motTest : this.motsTest.keySet()) {
 			ArrayList<String> phonemesMotTest = new ArrayList<>();
 			phonemesMotTest = this.motsTest.get(motTest);
@@ -205,7 +176,7 @@ public class Hmm {
 					ArrayList<String> phonemesMotLexique = new ArrayList<>();
 					phonemesMotLexique = this.motsLexique.get(motLexique);
 					for (int j = 0; j < phonemesMotLexique.size(); j++) {
-						if(!phonemesMotTest.get(i).isEmpty() && phonemesMotTest.get(i).length() != 0 ){
+						if (!phonemesMotTest.get(i).isEmpty() && phonemesMotTest.get(i).length() != 0) {
 							distanceLevenshtein = distanceLevenshtein(motTest, phonemesMotTest.get(i), motLexique,
 									phonemesMotLexique.get(j));
 							if (distanceLevenshtein < minDistanceLevenshtein) {
@@ -215,7 +186,7 @@ public class Hmm {
 								affichageMotReconnu = affichageDistLeven;
 							}
 						}
-						
+
 					}
 				}
 				System.out.println(affichageMotReconnu);

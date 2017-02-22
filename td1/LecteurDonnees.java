@@ -27,8 +27,6 @@ public class LecteurDonnees {
 		BufferedReader br;
 		String tab = "	";
 		ArrayList<String> nouvelleEntree;
-        @SuppressWarnings("unused")
-		Pattern pattern = Pattern.compile(tab);
         br = new BufferedReader(new FileReader(lexique));
  
         System.out.print("Lecture du lexique... ");

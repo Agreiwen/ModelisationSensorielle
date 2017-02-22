@@ -10,30 +10,25 @@ public class reco_HMM_discret {
 
 	Hmm hmmdiscret;
 	LecteurDonnees ld;
-//	TraitementDonnees td;
 	public reco_HMM_discret(String fichierTest, String lexique, String hmm){
 		try {
-			System.setOut(new PrintStream(new File("reconnaissance.txt")));
+			System.setOut(new PrintStream(new File("reco_HMM_discret.txt")));
 		} catch (FileNotFoundException e1) {
 			e1.printStackTrace();
 		}
 		
-		System.out.println("Lecture des fichiers suivants : "+fichierTest+" et "+lexique+" et "+hmm);
+		System.out.println("Lecture des fichiers suivants : "+fichierTest+", "+lexique+" et "+hmm);
 		
 		try {
 			ld = new LecteurDonnees(fichierTest, lexique);
-			
-			
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 		try {
 			hmmdiscret = new Hmm(hmm, ld);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		//td = new TraitementDonnees(ld);
 		hmmdiscret.reconnaissanceLevenshtein();
 		System.out.println();
 	}

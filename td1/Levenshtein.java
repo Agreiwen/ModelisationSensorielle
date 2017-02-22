@@ -103,7 +103,7 @@ public class Levenshtein {
 		String phonemesMotReconnu = "";
 		int nombreErreur = 0;
 		int nombreCorrect = 0;
-		System.out.println("pour chaque action : s = substitution o = omission i = insertion \n");
+		System.out.println("\nPour chaque action : s = substitution o = omission i = insertion \n");
 		for (String motTest : this.motsTest.keySet()) {
 			ArrayList<String> phonemesMotTest = new ArrayList<>();
 			phonemesMotTest = this.motsTest.get(motTest);

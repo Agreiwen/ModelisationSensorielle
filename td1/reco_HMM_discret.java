@@ -13,12 +13,12 @@ public class reco_HMM_discret {
 //	TraitementDonnees td;
 	public reco_HMM_discret(String fichierTest, String lexique, String hmm){
 		try {
-			System.setOut(new PrintStream(new File("reconnaissance.txt")));
+			System.setOut(new PrintStream(new File("reco_HMM_discret.txt")));
 		} catch (FileNotFoundException e1) {
 			e1.printStackTrace();
 		}
 		
-		System.out.println("Lecture des fichiers suivants : "+fichierTest+" et "+lexique+" et "+hmm);
+		System.out.println("Lecture des fichiers suivants : "+fichierTest+", "+lexique+" et "+hmm);
 		
 		try {
 			ld = new LecteurDonnees(fichierTest, lexique);

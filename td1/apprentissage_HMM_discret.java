@@ -1,11 +1,14 @@
 package td1;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintStream;
+import java.io.PrintWriter;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -33,9 +36,15 @@ public class apprentissage_HMM_discret {
 	
 	
 	public apprentissage_HMM_discret(String modeleinit, String donneesApp, String modeleapp){
+		try {
+			System.setOut(new PrintStream(new File("reco_dist_levenshtein.txt")));
+		} catch (FileNotFoundException e1) {
+			e1.printStackTrace();
+		}
 		motsApp = new ArrayList<>();
 		motsRef = new ArrayList<>();
 		motsTest = new ArrayList<>();
+		
 		this.fichierDest = modeleapp;
 		try {
 			lectureFichierModele(modeleinit);
@@ -67,7 +76,80 @@ public class apprentissage_HMM_discret {
 			
 		}
 		
+		miseAJour();
+		ecrireFichierModele(modeleapp);
+	}
+	
+	
+	
+	public void ecrireFichierModele(String fichierModele) {
+		String listePhoneme = "2;9;@;e;E;o;O;a;i;u;y;a~;o~;e~;H;w;j;R;l;p;t;k;b;d;g;f;s;S;v;z;Z;m;n;J";
+		String[] ordre = listePhoneme.split(";");
+		try {
+			PrintWriter pw = new PrintWriter(new BufferedWriter(new FileWriter(fichierModele)));
+			pw.println("Psub;Pins;Pomi");
+			pw.println(pSub + ";" + pIns + ";" + pOmi);
+			pw.println("#Une ligne par symbole de reference; une colonne par symbole de test");
+			pw.println("  ;2;9;@;e;E;o;O;a;i;u;y;a~;o~;e~;H;w;j;R;l;p;t;k;b;d;g;f;s;S;v;z;Z;m;n;J");
+			for (int i = 0; i < ordre.length; i++) {
+				pw.print(ordre[i]);
+				for (int j = 0; j < ordre.length; j++) {
+					pw.print(";" + matriceTransition.get(ordre[i]).get(ordre[j]));
+				}
+				pw.print("\n");
+			}
+			pw.println("Proba insertions...");
+			pw.print("<ins>");
+			for (int i = 0; i < ordre.length; i++) {
+				pw.print(";" + matriceTransition.get(ordre[i]).get("<ins>"));
+			}
+			pw.close();
+		} catch (IOException e) {
+
+			e.printStackTrace();
+		}
+	}
+	private void miseAJour() {
 		
+		double somme = 0;
+		for (String map : matriceTransition.keySet()) {
+			
+			for (String map3 : matriceTransition.keySet()) {
+				
+				somme += alignements.get(map).get(map3)+1;
+				
+				
+			}
+			for (String map2 : matriceTransition.get(map).keySet()) {
+				double rapport = 0;
+				if(alignements.get(map).containsKey(map2)){
+					
+					if(alignements.get(map).get(map2) !=0.){
+						System.out.println("aligne "+map+" "+map2+" "+alignements.get(map).get(map2));
+						System.out.println("somme "+somme);
+						System.out.println("-----------------------------");
+					}
+					rapport = alignements.get(map).get(map2)/somme;
+					matriceTransition.get(map).put(map2,rapport);
+					///;
+				}else{
+					System.out.println("le phonème "+map2+" est pas dedans");
+				}
+				
+				
+			}
+		}
+		double sommeinser = 0;
+		for (String map : insertions.keySet()) {
+			sommeinser += insertions.get(map)+1;
+		}
+		for (String map : insertions.keySet()) {
+			double rapport = insertions.get(map)/sommeinser;
+			matriceTransition.get(map).put("<ins>",rapport);
+		}
+		this.pSub = (double)((double)NSUB+1.)/(double)((double)NSUB+(double)NINS+(double)NOMI+1.);
+		this.pIns = (double)((double)NINS+1.)/(double)((double)NSUB+(double)NINS+(double)NOMI+1.);
+		this.pOmi = (double)((double)NOMI+1.)/(double)((double)NSUB+(double)NINS+(double)NOMI+1.);
 	}
 
 	private void lectureApp(String donneesApp) throws IOException {
@@ -119,7 +201,10 @@ public class apprentissage_HMM_discret {
 		String modeleinit = args[0];
 		String donneesApp = args[1];
 		String modeleapp = args[2];
-		new apprentissage_HMM_discret(modeleinit, donneesApp, modeleapp);
+		for (int i = 0; i < 5; i++) {
+			new apprentissage_HMM_discret(modeleinit, donneesApp, modeleapp);
+		}
+		
 	}
 	
 	private double getCsub(String phonemetest, String phonemeref) {
@@ -200,7 +285,9 @@ public class apprentissage_HMM_discret {
 				j++;
 				i++;
 				affichageDistLeven += " s(" + f1[i - 1] + "=>" + f2[j - 1] + ")";
+				//System.out.println(" s(" + f1[i - 1] + "=>" + f2[j - 1] + ")");
 				alignements.get(f1[i-1]).put(f2[j-1],alignements.get(f1[i-1]).get(f2[j-1])+1);
+			//	System.out.println(" je met : "+alignements.get(f1[i-1]).get(f2[j-1]));
 				NSUB++;
 			} else if (min == haut) {
 				j++;
@@ -215,6 +302,7 @@ public class apprentissage_HMM_discret {
 				System.out.println("erreur");
 		}
 		affichageDistLeven += "\n";
+		//System.out.println(affichageDistLeven);
 		return tmp[size1][size2];
 	}
 	

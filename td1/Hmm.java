@@ -26,7 +26,7 @@ public class Hmm {
 		motsTest = ld.motsTest;
 		motsLexique = ld.motsLexique;
 		lectureFichierModele(fichierTest);
-		ecrireFichierModele("modele_discret_final.dat");
+		
 	}
 
 	private double getCsub(String phonemetest, String phonemeref) {
@@ -92,33 +92,7 @@ public class Hmm {
 		br.close();
 	}
 
-	public void ecrireFichierModele(String fichierModele) {
-		String listePhoneme = "2;9;@;e;E;o;O;a;i;u;y;a~;o~;e~;H;w;j;R;l;p;t;k;b;d;g;f;s;S;v;z;Z;m;n;J";
-		String[] ordre = listePhoneme.split(";");
-		try {
-			PrintWriter pw = new PrintWriter(new BufferedWriter(new FileWriter(fichierModele)));
-			pw.println("Psub;Pins;Pomi");
-			pw.println(pSub + ";" + pIns + ";" + pOmi);
-			pw.println("#Une ligne par symbole de reference; une colonne par symbole de test");
-			pw.println("  ;2;9;@;e;E;o;O;a;i;u;y;a~;o~;e~;H;w;j;R;l;p;t;k;b;d;g;f;s;S;v;z;Z;m;n;J");
-			for (int i = 0; i < ordre.length; i++) {
-				pw.print(ordre[i]);
-				for (int j = 0; j < ordre.length; j++) {
-					pw.print(";" + matriceTransition.get(ordre[i]).get(ordre[j]));
-				}
-				pw.print("\n");
-			}
-			pw.println("Proba insertions...");
-			pw.print("<ins>");
-			for (int i = 0; i < ordre.length; i++) {
-				pw.print(";" + matriceTransition.get(ordre[i]).get("<ins>"));
-			}
-			pw.close();
-		} catch (IOException e) {
-
-			e.printStackTrace();
-		}
-	}
+	
 
 	public double levenshteinCalcul(String[] f1, String[] f2) {
 		int size1 = f1.length;

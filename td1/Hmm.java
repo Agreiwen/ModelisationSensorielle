@@ -21,7 +21,7 @@ public class Hmm {
 	public Hmm(String fichierTest, LecteurDonnees ld) throws IOException {
 		motsTest = ld.motsTest;
 		motsLexique = ld.motsLexique;
-		lectureFichierTest(fichierTest);
+		lectureFichierModele(fichierTest);
 	}
 
 	private double getCsub(String phonemetest, String phonemeref) {
@@ -46,7 +46,7 @@ public class Hmm {
 		return levenshteinCalcul(t1, t2);
 	}
 
-	private void lectureFichierTest(String fichierTest) throws IOException {
+	private void lectureFichierModele(String fichierTest) throws IOException {
 		String st = "";
 		String[] separated;
 		BufferedReader br;

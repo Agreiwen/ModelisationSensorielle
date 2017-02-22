@@ -31,8 +31,8 @@ public class reco_dist_levenshtein {
 	}
 
 	public static void main(String[] args) {
-		String fichierTest = args[0];
-		String lexique = args[1];
+		String lexique = args[0];
+		String fichierTest = args[1];
 		new reco_dist_levenshtein(fichierTest, lexique);
 	}
 

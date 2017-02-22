@@ -27,6 +27,7 @@ public class Hmm {
 	}
 
 	private double getCsub(String phonemetest, String phonemeref) {
+		//System.out.println("Phoneme ref recu : "+phonemeref+" phoneme test recu :"+phonemetest);
 		return -Math.log(psub)-Math.log(matriceTransition.get(phonemetest).get(phonemeref));
 	}
 	
@@ -38,7 +39,7 @@ public class Hmm {
 		return -Math.log(pomi);
 	}
 	
-	public int distanceLevenshtein(String mot1, String f1, String mot2, String f2) {
+	public double distanceLevenshtein(String mot1, String f1, String mot2, String f2) {
 		affichageDistLeven = "";
 		affichageDistLeven += mot1 + " [" + f1 + "]";
 		affichageDistLeven += " => " + mot2 + " [" + f2 + "] ";
@@ -88,7 +89,7 @@ public class Hmm {
         	for (int i = 1; i < separated.length; i++) {
         		
         		    matriceTransition.get(separated2[i]).put(separated[0],Double.parseDouble(separated[i]));
-        		    System.out.println("Abscisse :"+separated2[i]+" Ordonnee :"+separated[0]+"  valeur :"+separated[i]);
+        		 //   System.out.println("Abscisse :"+separated2[i]+" Ordonnee :"+separated[0]+"  valeur :"+separated[i]);
    				
 			}
     	}
@@ -98,11 +99,11 @@ public class Hmm {
 	}
 	
 	
-	public int levenshteinCalcul(String[] f1, String[] f2) {
+	public double levenshteinCalcul(String[] f1, String[] f2) {
 		int size1 = f1.length;
 		int size2 = f2.length;
-
-		int[][] tmp = new int[size1 + 1][size2 + 1];
+		
+		double[][] tmp = new double[size1 + 1][size2 + 1];
 
 		for (int i = 0; i <= size1; i++) {
 			tmp[i][0] = i;
@@ -110,13 +111,23 @@ public class Hmm {
 		for (int j = 0; j <= size2; j++) {
 			tmp[0][j] = j;
 		}
-
+	/*	System.out.println("");
+		System.out.print("On compare: ");
+		for (int i = 1; i <= size1; i++) {
+			System.out.println("Taille"+size1);
+			System.out.print(f1[i-1]);
+		}
+		System.out.print(" et ");
+		for (int j = 1; j <= size2; j++) {
+			System.out.print(f2[j-1]);
+		}*/
+		System.out.print("\n");
 		for (int i = 1; i <= size1; i++) {
 			for (int j = 1; j <= size2; j++) {
-				int m = (f1[i - 1].equals(f2[j - 1])) ? 0 : 1;
-				int omi = tmp[i - 1][j] + 1;
-				int inser = tmp[i][j - 1] + 1;
-				int sub = tmp[i - 1][j - 1] + m;
+				double m = getCsub(f1[i-1],f2[j-1]);
+				double omi = tmp[i - 1][j] + getComi();
+				double inser = tmp[i][j - 1] + getCins(f1[i-1]);
+				double sub = tmp[i - 1][j - 1] + m;
 				tmp[i][j] = Math.min(Math.min(omi, inser), sub);
 			}
 		}
@@ -132,9 +143,9 @@ public class Hmm {
 		int i = 0;
 		boolean fini = false;
 		while (!fini) {
-			int haut = 0;
-			int droite = 0;
-			int diago = 0;
+			double haut = 0;
+			double droite = 0;
+			double diago = 0;
 			if (i == size1 && j == size2)
 				break;
 			if (i < size1 && j < size2)
@@ -150,7 +161,7 @@ public class Hmm {
 			else
 				droite = 500;
 
-			int min = Math.min(haut, Math.min(diago, droite));
+			double min = Math.min(haut, Math.min(diago, droite));
 			if (min == diago) {
 				j++;
 				i++;
@@ -170,8 +181,8 @@ public class Hmm {
 
 	
 	public void reconnaissanceLevenshtein() {
-		int distanceLevenshtein;
-		int minDistanceLevenshtein;
+		double distanceLevenshtein;
+		double minDistanceLevenshtein;
 		String motReconnu;
 		String phonemesMotReconnu = "";
 		int nombreErreur = 0;
@@ -188,14 +199,17 @@ public class Hmm {
 					ArrayList<String> phonemesMotLexique = new ArrayList<>();
 					phonemesMotLexique = this.motsLexique.get(motLexique);
 					for (int j = 0; j < phonemesMotLexique.size(); j++) {
-						distanceLevenshtein = distanceLevenshtein(motTest, phonemesMotTest.get(i), motLexique,
-								phonemesMotLexique.get(j));
-						if (distanceLevenshtein < minDistanceLevenshtein) {
-							minDistanceLevenshtein = distanceLevenshtein;
-							motReconnu = motLexique;
-							phonemesMotReconnu = phonemesMotLexique.get(j);
-							affichageMotReconnu = affichageDistLeven;
+						if(!phonemesMotTest.get(i).isEmpty() && phonemesMotTest.get(i).length() != 0 ){
+							distanceLevenshtein = distanceLevenshtein(motTest, phonemesMotTest.get(i), motLexique,
+									phonemesMotLexique.get(j));
+							if (distanceLevenshtein < minDistanceLevenshtein) {
+								minDistanceLevenshtein = distanceLevenshtein;
+								motReconnu = motLexique;
+								phonemesMotReconnu = phonemesMotLexique.get(j);
+								affichageMotReconnu = affichageDistLeven;
+							}
 						}
+						
 					}
 				}
 				System.out.println(affichageMotReconnu);

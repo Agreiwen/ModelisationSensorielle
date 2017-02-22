@@ -23,6 +23,12 @@ public class apprentissage_HMM_discret {
 	protected double pSub;
 	protected double pIns;
 	protected double pOmi;
+	
+	public int NSUB=0;
+	public int NINS=0;
+	public int NOMI=0;
+	protected HashMap<String, HashMap<String, Double>> alignements;
+	protected HashMap<String, Integer> insertions;
 	//protected ArrayList<ArrayList<ArrayList<String>>> baseapp;
 	
 	
@@ -44,6 +50,11 @@ public class apprentissage_HMM_discret {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		
+		//initiliasation hasmap des alignements
+	
+		
+
 		
 		
 		for(int i = 0; i<motsApp.size();i++){
@@ -189,12 +200,17 @@ public class apprentissage_HMM_discret {
 				j++;
 				i++;
 				affichageDistLeven += " s(" + f1[i - 1] + "=>" + f2[j - 1] + ")";
+				alignements.get(f1[i-1]).put(f2[j-1],alignements.get(f1[i-1]).get(f2[j-1])+1);
+				NSUB++;
 			} else if (min == haut) {
 				j++;
 				affichageDistLeven += " i(=>" + f2[j - 1] + ")";
+				insertions.put(f2[j-1], insertions.get(f2[j-1])+1);
+				NINS++;
 			} else if (min == droite) {
 				i++;
 				affichageDistLeven += " o(=>" + f1[i - 1] + ")";
+				NOMI++;
 			} else
 				System.out.println("erreur");
 		}
@@ -223,13 +239,19 @@ public class apprentissage_HMM_discret {
 		String coltableau = br.readLine();
 		String[] separated2 = coltableau.split(tab);
 
+		
+		insertions = new HashMap<String, Integer>();
 		matriceTransition = new HashMap<>();
-
+		alignements = new HashMap<>();
 		for (int i = 1; i < separated2.length; i++) {
+			insertions.put(separated2[i], 0);
 			HashMap<String, Double> matricetmp = new HashMap<>();
+			HashMap<String, Double> alignementsTmp = new HashMap<>();
 			for (int j = 1; j < separated2.length; j++) {
 				matricetmp.put(separated2[j], 0.);
+				alignementsTmp.put(separated2[j], 0.);
 			}
+			alignements.put(separated2[i], alignementsTmp);
 			matriceTransition.put(separated2[i], matricetmp);
 		}
 

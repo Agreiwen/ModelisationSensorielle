@@ -3,14 +3,14 @@ package td1;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public class TraitementDonnees {
+public class Levenshtein {
 
 	HashMap<String, ArrayList<String>> motsTest;
 	HashMap<String, ArrayList<String>> motsLexique;
 	String affichageDistLeven = "";
 	String affichageMotReconnu = "";
 
-	public TraitementDonnees(LecteurDonnees ld) {
+	public Levenshtein(LecteurDonnees ld) {
 		motsTest = ld.motsTest;
 		motsLexique = ld.motsLexique;
 	}

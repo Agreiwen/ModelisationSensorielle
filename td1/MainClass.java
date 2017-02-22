@@ -9,31 +9,34 @@ public class MainClass {
 	
 	LecteurDonnees ld;
 	TraitementDonnees td;
+	Hmm hmmdiscret;
 	
-	public MainClass(String fichierTest, String lexique){
+	public MainClass(String fichierTest, String lexique, String hmm){
 		try {
 			System.setOut(new PrintStream(new File("reconnaissance.txt")));
 		} catch (FileNotFoundException e1) {
 			e1.printStackTrace();
 		}
 		
-		System.out.println("Lecture des fichiers suivants : "+fichierTest+" et "+lexique);
+		System.out.println("Lecture des fichiers suivants : "+fichierTest+" et "+lexique+" et "+hmm);
 		
 		try {
-			ld = new LecteurDonnees(fichierTest, lexique);
+			//ld = new LecteurDonnees(fichierTest, lexique);
+			hmmdiscret = new Hmm(hmm);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		td = new TraitementDonnees(ld);
+		//td = new TraitementDonnees(ld);
 		System.out.println();
-		td.reconnaissanceLevenshtein();
+		//td.reconnaissanceLevenshtein();
 		//System.out.println(td.distanceLevenshtein("m o a", "a m o a"));
 	}
 
 	public static void main(String[] args) {
 		String fichierTest = args[0];
 		String lexique = args[1];
-		new MainClass(fichierTest, lexique);
+		String hmminit = args[2];
+		new MainClass(fichierTest, lexique, hmminit);
 	}
 
 }

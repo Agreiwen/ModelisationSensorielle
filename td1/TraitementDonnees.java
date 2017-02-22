@@ -56,65 +56,7 @@ public class TraitementDonnees {
 			}
 		}
 
-		// ALGO UN
-		/*if (size1 >= size2) {
-			int previous = 0;
-			for (int i = 1; i <= size1; i++) {
-				int min = Integer.MAX_VALUE;
-				String actionMin = "";
-				for (int j = 1; j <= size2; j++) {
-					if (tmp[i][j] < min){
-						min = tmp[i][j];
-						actionMin = action[i][j];
-					}
-				}
-				if(min == previous) actionMin = "correct";
-				previous = min;
-				System.out.println(min+" "+actionMin);
-			}
-		}else{
-			int previous = 0;
-			for (int i = 1; i <= size2; i++) {
-				int min = Integer.MAX_VALUE;
-				String actionMin = "";
-				for (int j = 1; j <= size1; j++) {
-					if (tmp[j][i] < min){
-						min = tmp[j][i];
-						actionMin = action[j][i];
-					}
-				}
-				if(min == previous) actionMin = "correct";
-				previous = min;
-				System.out.println(min+" "+actionMin);
-			}
-			
-		}*/
 		
-		
-		
-		// ALGO DEUX
-		/*if(size1>=size2){
-			for (int i = 1; i <= size1; i++) {
-				int min = Integer.MAX_VALUE;
-				int x = 0;
-				int y = 0;
-				for (int j = 1; j <= size2; j++) {
-					if(tmp[i][j]<min){
-						min = tmp[i][j];
-						x = i;
-						y = j;
-					}
-					
-				}
-					if(action[x][y].equals("correct"))System.out.print(" c("+f1[x-1]+"=>"+f2[y-1]+")");
-					else if(action[x][y].equals("sub"))System.out.print(" s("+f1[x-1]+"=>"+f2[y-1]+")");
-					else if(action[x][y].equals("omi"))System.out.print(" o(=>"+f1[x-1]+")");
-					else if(action[x][y].equals("inser"))System.out.print(" i(=>"+f2[y-1]+")");
-				
-				
-			}
-		}
-		System.out.println("");*/
 		if(tmp[size1][size2]>0)System.out.print("Erreur "+tmp[size1][size2]+" <=> ");
 		else System.out.print("Correct "+tmp[size1][size2]+" <=> ");
 		
@@ -157,15 +99,7 @@ public class TraitementDonnees {
 			else System.out.println("erreur");
 			
 		}
-		System.out.println("");
-		
-		
-		/*
-		for (int i = 1; i <= size2; i++) {
-			for (int j = 1; j <= size1; j++) {
-			}
-		}*/
-		
+		System.out.println("");	
 			
 		System.out.println("------------");
 		
@@ -192,17 +126,6 @@ public class TraitementDonnees {
 					ArrayList<String> phonemesMotLexique = new ArrayList<>();
 					phonemesMotLexique = this.motsLexique.get(motLexique);
 					for (int j = 0; j < phonemesMotLexique.size(); j++) {
-						/*
-						 * sb = new StringBuilder(motTest+" ["
-						 * +phonemesMotTest.get(i)+"] => "+motLexique+" ["
-						 * +phonemesMotLexique.get(j)+"] "); distanceLevenshtein
-						 * = distanceLevenshtein(phonemesMotTest.get(i),
-						 * phonemesMotLexique.get(j)); if(distanceLevenshtein >
-						 * 0){ sb.append("Erreur"); }else{ sb.append("Correct");
-						 * } sb.append(" "
-						 * +Integer.toString(distanceLevenshtein));
-						 * System.out.println(sb.toString());
-						 */
 						distanceLevenshtein = distanceLevenshtein(motTest,phonemesMotTest.get(i), motLexique,phonemesMotLexique.get(j));
 						if (distanceLevenshtein < minDistanceLevenshtein) {
 							minDistanceLevenshtein = distanceLevenshtein;
@@ -211,54 +134,7 @@ public class TraitementDonnees {
 						}
 					}
 				}
-				/*sb = new StringBuilder(motTest + " [" + phonemesMotTest.get(i) + "] => " + motReconnu + " ["
-						+ phonemesMotReconnu + "] ");
-				if (!motReconnu.equals(motTest)) {
-					sb.append("Erreur");
-					nombreErreur++;
-				} else {
-					sb.append("Correct");
-					nombreCorrect++;
-				}
-				sb.append(" " + Integer.toString(minDistanceLevenshtein));
-				sb.append(" <=> ");
-				String[] separatedPhonemesMotTest = phonemesMotTest.get(i).split(" ");
-				String[] separatedPhonemesMotReconnu = phonemesMotReconnu.split(" ");
-				if (separatedPhonemesMotTest.length == separatedPhonemesMotReconnu.length) {
-					for (int j = 0; j < separatedPhonemesMotTest.length; j++) {
-						if (!separatedPhonemesMotReconnu[j].equals(separatedPhonemesMotTest[j])) {
-							sb.append("(" + separatedPhonemesMotReconnu[j] + "=>" + separatedPhonemesMotTest[j] + ")");
-						} else {
-							sb.append(separatedPhonemesMotReconnu[j]);
-						}
-						sb.append(" ");
-					}
-				} else if (separatedPhonemesMotTest.length < separatedPhonemesMotReconnu.length) {
-					for (int j = 0; j < separatedPhonemesMotTest.length; j++) {
-						if (!separatedPhonemesMotReconnu[j].equals(separatedPhonemesMotTest[j])) {
-							sb.append("(" + separatedPhonemesMotReconnu[j] + "=>" + separatedPhonemesMotTest[j] + ")");
-						} else {
-							sb.append(separatedPhonemesMotReconnu[j]);
-						}
-						sb.append(" ");
-					}
-					for (int j = separatedPhonemesMotTest.length; j < separatedPhonemesMotReconnu.length; j++) {
-						sb.append("(" + separatedPhonemesMotReconnu[j] + "=>) ");
-					}
-				} else if (separatedPhonemesMotTest.length > separatedPhonemesMotReconnu.length) {
-					for (int j = 0; j < separatedPhonemesMotReconnu.length; j++) {
-						if (!separatedPhonemesMotReconnu[j].equals(separatedPhonemesMotTest[j])) {
-							sb.append("(" + separatedPhonemesMotReconnu[j] + "=>" + separatedPhonemesMotTest[j] + ")");
-						} else {
-							sb.append(separatedPhonemesMotReconnu[j]);
-						}
-						sb.append(" ");
-					}
-					for (int j = separatedPhonemesMotReconnu.length; j < separatedPhonemesMotTest.length; j++) {
-						sb.append("(=>" + separatedPhonemesMotTest[j] + ") ");
-					}
-				}
-				System.out.println(sb.toString());*/
+				
 			}
 		}
 		System.out.println();

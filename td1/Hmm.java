@@ -121,7 +121,7 @@ public class Hmm {
 		for (int j = 1; j <= size2; j++) {
 			System.out.print(f2[j-1]);
 		}*/
-		System.out.print("\n");
+		//System.out.print("\n");
 		for (int i = 1; i <= size1; i++) {
 			for (int j = 1; j <= size2; j++) {
 				double m = getCsub(f1[i-1],f2[j-1]);

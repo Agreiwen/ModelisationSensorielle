@@ -28,27 +28,24 @@ public class Hmm {
         @SuppressWarnings("unused")
 		Pattern pattern = Pattern.compile(tab);
         br = new BufferedReader(new FileReader(fichierTest));
- 
         System.out.print("Lecture du fichier test... ");
+        
+        String nomproba = br.readLine();
+        String valeurproba = br.readLine();
+        separated = valeurproba.split(tab);
+        String psub = separated[0];
+        String pins = separated[1];
+        String pomi = separated[2];
+        
+        String commentaire = br.readLine();
         while ((st = br.readLine()) != null) {
         	separated = st.split(tab);
         	for (int i = 0; i < separated.length; i++) {
         		System.out.println(separated[i]+" endmot ");
 			}
         	
-        	/*partie1 = separated[0];
-        	if(separated.length != 2){
-        		partie2 = "";
-        	}else{
-        		partie2 = separated[1];
-        	}
-        	if(motsTest.containsKey(partie1)){
-        		motsTest.get(partie1).add(partie2);
-        	}else{
-        		nouvelleEntree = new ArrayList<>();
-        		nouvelleEntree.add(partie2);
-        		motsTest.put(partie1, nouvelleEntree);
-        	}*/
+        	System.out.println(" endligne ");
+        	
         }
         System.out.println("Termine.");
         br.close();

@@ -9,7 +9,8 @@ public class reco_HMM_discret {
 	
 
 	Hmm hmmdiscret;
-	
+	LecteurDonnees ld;
+//	TraitementDonnees td;
 	public reco_HMM_discret(String fichierTest, String lexique, String hmm){
 		try {
 			System.setOut(new PrintStream(new File("reconnaissance.txt")));
@@ -20,11 +21,20 @@ public class reco_HMM_discret {
 		System.out.println("Lecture des fichiers suivants : "+fichierTest+" et "+lexique+" et "+hmm);
 		
 		try {
-			hmmdiscret = new Hmm(hmm);
+			ld = new LecteurDonnees(fichierTest, lexique);
+			
+			
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		
+		try {
+			hmmdiscret = new Hmm(hmm, ld);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		//td = new TraitementDonnees(ld);
+		hmmdiscret.reconnaissanceLevenshtein();
 		System.out.println();
 	}
 

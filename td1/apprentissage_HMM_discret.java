@@ -15,12 +15,16 @@ import java.util.regex.Pattern;
 
 public class apprentissage_HMM_discret {
 	public String fichierDest;
-	public HashMap<String, ArrayList<String>> motsApp;
-	protected HashMap<String, HashMap<String,ArrayList<String>>> baseapp;
+	public ArrayList<String> motsApp;
+	public ArrayList<String> motRef;
+	public ArrayList<String> motTest;
+	//protected ArrayList<ArrayList<ArrayList<String>>> baseapp;
 	
 	
 	public apprentissage_HMM_discret(String modeleinit, String donneesApp, String modeleapp){
-		baseapp = new HashMap<>();
+		motsApp = new ArrayList<>();
+		motRef = new ArrayList<>();
+		motTest = new ArrayList<>();
 		this.fichierDest = modeleapp;
 		System.out.println("Lecture des fichiers suivants : "+modeleinit+" et "+donneesApp+" et "+modeleapp);
 		try {
@@ -36,7 +40,7 @@ public class apprentissage_HMM_discret {
 		String[] separated;
 		BufferedReader br;
 		String tab = "	";
-		ArrayList<String> nouvelleEntree;
+		//ArrayList<String> nouvelleEntree;
 		// @SuppressWarnings("unused")
 		// Pattern pattern = Pattern.compile(tab);
 		br = new BufferedReader(new FileReader(donneesApp));
@@ -47,8 +51,8 @@ public class apprentissage_HMM_discret {
 
 		while ((st = br.readLine()) != null) {
 			// st = br.readLine();
-			ArrayList<String> testPossible = new ArrayList<>();
-			HashMap<String, ArrayList<String>> reference = new HashMap<>();
+			//ArrayList<String> testPossible = new ArrayList<>();
+		//	HashMap<String, ArrayList<String>> reference = new HashMap<>();
 			
 			separated = st.split(tab);
 			String motinfo = separated[0];
@@ -68,21 +72,9 @@ public class apprentissage_HMM_discret {
 			
 			String motref = matchList.get(0);
 			String mottest = matchList2.get(0);
-			if (baseapp.containsKey(motinfo)){
-				if(baseapp.get(motinfo).containsKey(motref)){
-					if(!baseapp.get(motinfo).get(motref).contains(mottest)){
-						baseapp.get(motinfo).get(motref).add(mottest);
-					}
-				}else{
-					testPossible.add(mottest);
-					//reference.put(motref, testPossible);
-					baseapp.get(motinfo).put(motref, testPossible);
-				}
-			}else{
-				testPossible.add(mottest);
-				reference.put(motref, testPossible);
-				baseapp.put(motinfo,reference);
-			}
+			this.motsApp.add(motinfo);
+			this.motRef.add(motref);
+			this.motTest.add(mottest);
 		}
 		System.out.println("Termine.");
 		br.close();

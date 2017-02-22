@@ -6,9 +6,8 @@ import java.io.PrintStream;
 
 import javax.swing.JFrame;
 
+@SuppressWarnings("serial")
 public class MainClass extends JFrame{
-
-	private Modele m;
 
 	public MainClass() {
 		super("Projet Modelisation - Logiciel de traitement d'image");
@@ -20,8 +19,7 @@ public class MainClass extends JFrame{
 			e1.printStackTrace();
 		}
 		
-	    
-		Modele m = new Modele();
+		new Modele();
 	}
 
 	public static void main(String[] args) {

@@ -1,12 +1,10 @@
 package td1;
 
 import java.io.BufferedReader;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Map;
 import java.util.regex.Pattern;
 
 public class Hmm {
@@ -30,17 +28,14 @@ public class Hmm {
 
 	private double getCsub(String phonemetest, String phonemeref) {
 		return -Math.log(psub)-Math.log(matriceTransition.get(phonemetest).get(phonemeref));
-		
 	}
 	
 	private double getCins(String phoneme1test) {
 		return -Math.log(pins)-Math.log(matriceTransition.get(phoneme1test).get("<ins>"));
-		
 	}
 
 	private double getComi() {
 		return -Math.log(pomi);
-		
 	}
 	
 	public int distanceLevenshtein(String mot1, String f1, String mot2, String f2) {
@@ -61,7 +56,6 @@ public class Hmm {
 		BufferedReader br;
 		String tab = ";";
 		ArrayList<String> nouvelleEntree;
-        @SuppressWarnings("unused")
 		Pattern pattern = Pattern.compile(tab);
         br = new BufferedReader(new FileReader(fichierTest));
         System.out.println("Lecture du fichier test... ");

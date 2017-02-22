@@ -15,10 +15,10 @@ public class Hmm {
 	HashMap<String, ArrayList<String>> motsLexique;
 	String affichageDistLeven = "";
 	String affichageMotReconnu = "";
+	
 	protected double psub;
 	protected double pins;
 	protected double pomi;
-
 	protected HashMap<String, HashMap<String,Double>> matriceTransition;
 	
 	public Hmm(String fichierTest, LecteurDonnees ld) throws IOException{

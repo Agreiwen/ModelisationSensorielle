@@ -8,7 +8,7 @@ import java.io.PrintStream;
 public class reco_dist_levenshtein {
 	
 	LecteurDonnees ld;
-	TraitementDonnees td;
+	Levenshtein td;
 	
 	public reco_dist_levenshtein(String fichierTest, String lexique){
 		try {
@@ -24,7 +24,7 @@ public class reco_dist_levenshtein {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		td = new TraitementDonnees(ld);
+		td = new Levenshtein(ld);
 		System.out.println();
 		td.reconnaissanceLevenshtein();
 		//System.out.println(td.distanceLevenshtein("m o a", "a m o a"));

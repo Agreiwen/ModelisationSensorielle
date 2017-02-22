@@ -1,8 +1,11 @@
 package td1;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -12,29 +15,30 @@ public class Hmm {
 	HashMap<String, ArrayList<String>> motsLexique;
 	String affichageDistLeven = "";
 	String affichageMotReconnu = "";
-	
-	protected double psub;
-	protected double pins;
-	protected double pomi;
 
-	protected HashMap<String, HashMap<String,Double>> matriceTransition;
-	
-	public Hmm(String fichierTest, LecteurDonnees ld) throws IOException{
+	protected double pSub;
+	protected double pIns;
+	protected double pOmi;
+
+	protected HashMap<String, HashMap<String, Double>> matriceTransition;
+
+	public Hmm(String fichierTest, LecteurDonnees ld) throws IOException {
 		motsTest = ld.motsTest;
 		motsLexique = ld.motsLexique;
-		lectureFichierTest(fichierTest);
+		lectureFichierModele(fichierTest);
+		ecrireFichierModele("modele_discret_final.dat");
 	}
 
 	private double getCsub(String phonemetest, String phonemeref) {
-		return -Math.log(psub) - Math.log(matriceTransition.get(phonemetest).get(phonemeref));
+		return -Math.log(pSub) - Math.log(matriceTransition.get(phonemetest).get(phonemeref));
 	}
 
 	private double getCins(String phoneme1test) {
-		return -Math.log(pins) - Math.log(matriceTransition.get(phoneme1test).get("<ins>"));
+		return -Math.log(pIns) - Math.log(matriceTransition.get(phoneme1test).get("<ins>"));
 	}
 
 	private double getComi() {
-		return -Math.log(pomi);
+		return -Math.log(pOmi);
 	}
 
 	public double distanceLevenshtein(String mot1, String f1, String mot2, String f2) {
@@ -47,12 +51,12 @@ public class Hmm {
 		return levenshteinCalcul(t1, t2);
 	}
 
-	private void lectureFichierTest(String fichierTest) throws IOException {
+	private void lectureFichierModele(String fichierModele) throws IOException {
 		String st = "";
 		String[] separated;
 		BufferedReader br;
 		String tab = ";";
-		br = new BufferedReader(new FileReader(fichierTest));
+		br = new BufferedReader(new FileReader(fichierModele));
 		System.out.print("Lecture du fichier modele HMM... ");
 
 		br.readLine();
@@ -61,9 +65,9 @@ public class Hmm {
 		String psub = separated[0];
 		String pins = separated[1];
 		String pomi = separated[2];
-		this.psub = Double.parseDouble(psub);
-		this.pins = Double.parseDouble(pins);
-		this.pomi = Double.parseDouble(pomi);
+		this.pSub = Double.parseDouble(psub);
+		this.pIns = Double.parseDouble(pins);
+		this.pOmi = Double.parseDouble(pomi);
 		br.readLine();
 		String coltableau = br.readLine();
 		String[] separated2 = coltableau.split(tab);
@@ -86,6 +90,34 @@ public class Hmm {
 		}
 		System.out.println("Termine.");
 		br.close();
+	}
+
+	public void ecrireFichierModele(String fichierModele) {
+		String listePhoneme = "2;9;@;e;E;o;O;a;i;u;y;a~;o~;e~;H;w;j;R;l;p;t;k;b;d;g;f;s;S;v;z;Z;m;n;J";
+		String[] ordre = listePhoneme.split(";");
+		try {
+			PrintWriter pw = new PrintWriter(new BufferedWriter(new FileWriter(fichierModele)));
+			pw.println("Psub;Pins;Pomi");
+			pw.println(pSub + ";" + pIns + ";" + pOmi);
+			pw.println("#Une ligne par symbole de reference; une colonne par symbole de test");
+			pw.println("  ;2;9;@;e;E;o;O;a;i;u;y;a~;o~;e~;H;w;j;R;l;p;t;k;b;d;g;f;s;S;v;z;Z;m;n;J");
+			for (int i = 0; i < ordre.length; i++) {
+				pw.print(ordre[i]);
+				for (int j = 0; j < ordre.length; j++) {
+					pw.print(";" + matriceTransition.get(ordre[i]).get(ordre[j]));
+				}
+				pw.print("\n");
+			}
+			pw.println("Proba insertions...");
+			pw.print("<ins>");
+			for (int i = 0; i < ordre.length; i++) {
+				pw.print(";" + matriceTransition.get(ordre[i]).get("<ins>"));
+			}
+			pw.close();
+		} catch (IOException e) {
+
+			e.printStackTrace();
+		}
 	}
 
 	public double levenshteinCalcul(String[] f1, String[] f2) {

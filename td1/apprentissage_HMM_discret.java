@@ -130,6 +130,7 @@ public class apprentissage_HMM_discret {
 						System.out.println("-----------------------------");
 					}
 					rapport = alignements.get(map).get(map2)/somme;
+					if(rapport==0)rapport = 0.001;
 					matriceTransition.get(map).put(map2,rapport);
 					///;
 				}else{
@@ -147,9 +148,11 @@ public class apprentissage_HMM_discret {
 			double rapport = insertions.get(map)/sommeinser;
 			matriceTransition.get(map).put("<ins>",rapport);
 		}
-		this.pSub = (double)((double)NSUB+1.)/(double)((double)NSUB+(double)NINS+(double)NOMI+1.);
-		this.pIns = (double)((double)NINS+1.)/(double)((double)NSUB+(double)NINS+(double)NOMI+1.);
-		this.pOmi = (double)((double)NOMI+1.)/(double)((double)NSUB+(double)NINS+(double)NOMI+1.);
+		System.out.println("LES PROBA SONT LA FRERE : "+pSub+" "+pIns+" "+pOmi);
+		System.out.println("LES SOMMES SONT LA FRERE : "+NSUB+" "+NINS+" "+NOMI);
+		this.pSub = (double)((double)NSUB+1.)/(double)((double)NSUB+(double)NINS+(double)NOMI+3.);
+		this.pIns = (double)((double)NINS+1.)/(double)((double)NSUB+(double)NINS+(double)NOMI+3.);
+		this.pOmi = (double)((double)NOMI+1.)/(double)((double)NSUB+(double)NINS+(double)NOMI+3.);
 	}
 
 	private void lectureApp(String donneesApp) throws IOException {
@@ -201,13 +204,14 @@ public class apprentissage_HMM_discret {
 		String modeleinit = args[0];
 		String donneesApp = args[1];
 		String modeleapp = args[2];
-		for (int i = 0; i < 5; i++) {
+		for (int i = 0; i < 1; i++) {
 			new apprentissage_HMM_discret(modeleinit, donneesApp, modeleapp);
 		}
 		
 	}
 	
 	private double getCsub(String phonemetest, String phonemeref) {
+		if(matriceTransition.get(phonemetest).get(phonemeref)==0)System.out.println("XLHHHH");
 		return -Math.log(pSub) - Math.log(matriceTransition.get(phonemetest).get(phonemeref));
 	}
 

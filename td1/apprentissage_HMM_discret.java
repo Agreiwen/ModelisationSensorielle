@@ -9,7 +9,6 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.io.PrintWriter;
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -26,62 +25,62 @@ public class apprentissage_HMM_discret {
 	protected double pSub;
 	protected double pIns;
 	protected double pOmi;
-	
-	public int NSUB=0;
-	public int NINS=0;
-	public int NOMI=0;
+
+	public int NSUB = 0;
+	public int NINS = 0;
+	public int NOMI = 0;
 	protected HashMap<String, HashMap<String, Double>> alignements;
 	protected HashMap<String, Integer> insertions;
-	//protected ArrayList<ArrayList<ArrayList<String>>> baseapp;
-	
-	
-	public apprentissage_HMM_discret(String modeleinit, String donneesApp, String modeleapp){
-		try {
-			System.setOut(new PrintStream(new File("reco_dist_levenshtein.txt")));
-		} catch (FileNotFoundException e1) {
-			e1.printStackTrace();
-		}
-		motsApp = new ArrayList<>();
-		motsRef = new ArrayList<>();
-		motsTest = new ArrayList<>();
-		
-		this.fichierDest = modeleapp;
-		try {
-			lectureFichierModele(modeleinit);
-		} catch (IOException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
-		System.out.println("Lecture des fichiers suivants : "+modeleinit+" et "+donneesApp+" et "+modeleapp);
-		try {
-			lectureApp(donneesApp);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-		//initiliasation hasmap des alignements
-	
-		
 
-		
-		
-		for(int i = 0; i<motsApp.size();i++){
-			String motTest = motsTest.get(i);
-			String motRef = motsRef.get(i);
-			String[] f1 = motTest.split(" ");
-			String[] f2 = motRef.split(" ");
-			double a = levenshteinCalcul(f1, f2);
-			System.out.println(motTest+" ->"+motRef+" = "+a);
+	public apprentissage_HMM_discret(String modeleinit, String donneesApp, String modeleapp) {
+		for (int k = 0; k < 1; k++) {
+			motsApp = new ArrayList<>();
+			motsRef = new ArrayList<>();
+			motsTest = new ArrayList<>();
+
+			this.fichierDest = modeleapp;
+			if (k == 0) {
+				System.out.println(modeleinit);
+				try {
+					lectureFichierModele(modeleinit);
+				} catch (IOException e1) {
+					e1.printStackTrace();
+				}
+			}else{
+				System.out.println(modeleapp);
+				try {
+					lectureFichierModele(modeleapp);
+				} catch (IOException e1) {
+					e1.printStackTrace();
+				}
+			}
+			
+			System.out.println(
+					"Lecture des fichiers suivants : " + modeleinit + " et " + donneesApp + " et " + modeleapp);
+			try {
+				lectureApp(donneesApp);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+
+			for (int i = 0; i < motsApp.size(); i++) {
+				String motTest = motsTest.get(i);
+				String motRef = motsRef.get(i);
+				String[] f1 = motTest.split(" ");
+				String[] f2 = motRef.split(" ");
+				double a = levenshteinCalcul(f1, f2);
+				System.out.println(motTest + " ->" + motRef + " = " + a);
+			}
+			miseAJour();
+			ecrireFichierModele(modeleapp);
+			System.out.println("Nombre substitution : "+NSUB);
+			System.out.println("Nombre insertion : "+NINS);
+			System.out.println("Nombre omission : "+NOMI);
+			System.out.println("Psub : "+pSub);
 			
 		}
-		
-		miseAJour();
-		ecrireFichierModele(modeleapp);
 	}
-	
-	
-	
+
 	public void ecrireFichierModele(String fichierModele) {
 		String listePhoneme = "2;9;@;e;E;o;O;a;i;u;y;a~;o~;e~;H;w;j;R;l;p;t;k;b;d;g;f;s;S;v;z;Z;m;n;J";
 		String[] ordre = listePhoneme.split(";");
@@ -109,50 +108,43 @@ public class apprentissage_HMM_discret {
 			e.printStackTrace();
 		}
 	}
+
 	private void miseAJour() {
-		
 		double somme = 0;
 		for (String map : matriceTransition.keySet()) {
-			
 			for (String map3 : matriceTransition.keySet()) {
-				
-				somme += alignements.get(map).get(map3)+1;
-				
-				
+				somme += alignements.get(map).get(map3) + 1;
 			}
 			for (String map2 : matriceTransition.get(map).keySet()) {
 				double rapport = 0;
-				if(alignements.get(map).containsKey(map2)){
-					
-					if(alignements.get(map).get(map2) !=0.){
-						System.out.println("aligne "+map+" "+map2+" "+alignements.get(map).get(map2));
-						System.out.println("somme "+somme);
+				if (alignements.get(map).containsKey(map2)) {
+					if (alignements.get(map).get(map2) != 0.) {
+						System.out.println("aligne " + map + " " + map2 + " " + alignements.get(map).get(map2));
+						System.out.println("somme " + somme);
 						System.out.println("-----------------------------");
 					}
-					rapport = alignements.get(map).get(map2)/somme;
-					if(rapport==0)rapport = 0.001;
-					matriceTransition.get(map).put(map2,rapport);
-					///;
-				}else{
-					System.out.println("le phonème "+map2+" est pas dedans");
+					rapport = alignements.get(map).get(map2) / somme;
+					if (rapport == 0)
+						rapport = 0.001;
+					matriceTransition.get(map).put(map2, rapport);
+				} else {
+					System.out.println("le phonème " + map2 + " est pas dedans");
 				}
-				
-				
 			}
 		}
 		double sommeinser = 0;
 		for (String map : insertions.keySet()) {
-			sommeinser += insertions.get(map)+1;
+			sommeinser += insertions.get(map) + 1;
 		}
 		for (String map : insertions.keySet()) {
-			double rapport = insertions.get(map)/sommeinser;
-			matriceTransition.get(map).put("<ins>",rapport);
+			double rapport = insertions.get(map) / sommeinser;
+			matriceTransition.get(map).put("<ins>", rapport);
 		}
-		System.out.println("LES PROBA SONT LA FRERE : "+pSub+" "+pIns+" "+pOmi);
-		System.out.println("LES SOMMES SONT LA FRERE : "+NSUB+" "+NINS+" "+NOMI);
-		this.pSub = (double)((double)NSUB+1.)/(double)((double)NSUB+(double)NINS+(double)NOMI+3.);
-		this.pIns = (double)((double)NINS+1.)/(double)((double)NSUB+(double)NINS+(double)NOMI+3.);
-		this.pOmi = (double)((double)NOMI+1.)/(double)((double)NSUB+(double)NINS+(double)NOMI+3.);
+		System.out.println("LES PROBA SONT LA FRERE : " + pSub + " " + pIns + " " + pOmi);
+		System.out.println("LES SOMMES SONT LA FRERE : " + NSUB + " " + NINS + " " + NOMI);
+		this.pSub = (double) ((double) NSUB + 1.) / (double) ((double) NSUB + (double) NINS + (double) NOMI + 3.);
+		this.pIns = (double) ((double) NINS + 1.) / (double) ((double) NSUB + (double) NINS + (double) NOMI + 3.);
+		this.pOmi = (double) ((double) NOMI + 1.) / (double) ((double) NSUB + (double) NINS + (double) NOMI + 3.);
 	}
 
 	private void lectureApp(String donneesApp) throws IOException {
@@ -160,7 +152,7 @@ public class apprentissage_HMM_discret {
 		String[] separated;
 		BufferedReader br;
 		String tab = "	";
-		//ArrayList<String> nouvelleEntree;
+		// ArrayList<String> nouvelleEntree;
 		// @SuppressWarnings("unused")
 		// Pattern pattern = Pattern.compile(tab);
 		br = new BufferedReader(new FileReader(donneesApp));
@@ -171,9 +163,9 @@ public class apprentissage_HMM_discret {
 
 		while ((st = br.readLine()) != null) {
 			// st = br.readLine();
-			//ArrayList<String> testPossible = new ArrayList<>();
-		//	HashMap<String, ArrayList<String>> reference = new HashMap<>();
-			
+			// ArrayList<String> testPossible = new ArrayList<>();
+			// HashMap<String, ArrayList<String>> reference = new HashMap<>();
+
 			separated = st.split(tab);
 			String motinfo = separated[0];
 
@@ -189,7 +181,7 @@ public class apprentissage_HMM_discret {
 			while (test.find()) {// Finds Matching Pattern in String
 				matchList2.add(test.group(1));// Fetching Group from String
 			}
-			
+
 			String motref = matchList.get(0);
 			String mottest = matchList2.get(0);
 			this.motsApp.add(motinfo);
@@ -200,18 +192,9 @@ public class apprentissage_HMM_discret {
 		br.close();
 	}
 
-	public static void main(String[] args) {
-		String modeleinit = args[0];
-		String donneesApp = args[1];
-		String modeleapp = args[2];
-		for (int i = 0; i < 1; i++) {
-			new apprentissage_HMM_discret(modeleinit, donneesApp, modeleapp);
-		}
-		
-	}
-	
 	private double getCsub(String phonemetest, String phonemeref) {
-		if(matriceTransition.get(phonemetest).get(phonemeref)==0)System.out.println("XLHHHH");
+		if (matriceTransition.get(phonemetest).get(phonemeref) == 0)
+			System.out.println("XLHHHH");
 		return -Math.log(pSub) - Math.log(matriceTransition.get(phonemetest).get(phonemeref));
 	}
 
@@ -233,7 +216,6 @@ public class apprentissage_HMM_discret {
 		return levenshteinCalcul(t1, t2);
 	}
 
-	
 	public double levenshteinCalcul(String[] f1, String[] f2) {
 		int size1 = f1.length;
 		int size2 = f2.length;
@@ -289,14 +271,16 @@ public class apprentissage_HMM_discret {
 				j++;
 				i++;
 				affichageDistLeven += " s(" + f1[i - 1] + "=>" + f2[j - 1] + ")";
-				//System.out.println(" s(" + f1[i - 1] + "=>" + f2[j - 1] + ")");
-				alignements.get(f1[i-1]).put(f2[j-1],alignements.get(f1[i-1]).get(f2[j-1])+1);
-			//	System.out.println(" je met : "+alignements.get(f1[i-1]).get(f2[j-1]));
+				// System.out.println(" s(" + f1[i - 1] + "=>" + f2[j - 1] +
+				// ")");
+				alignements.get(f1[i - 1]).put(f2[j - 1], alignements.get(f1[i - 1]).get(f2[j - 1]) + 1);
+				// System.out.println(" je met :
+				// "+alignements.get(f1[i-1]).get(f2[j-1]));
 				NSUB++;
 			} else if (min == haut) {
 				j++;
 				affichageDistLeven += " i(=>" + f2[j - 1] + ")";
-				insertions.put(f2[j-1], insertions.get(f2[j-1])+1);
+				insertions.put(f2[j - 1], insertions.get(f2[j - 1]) + 1);
 				NINS++;
 			} else if (min == droite) {
 				i++;
@@ -306,10 +290,10 @@ public class apprentissage_HMM_discret {
 				System.out.println("erreur");
 		}
 		affichageDistLeven += "\n";
-		//System.out.println(affichageDistLeven);
+		// System.out.println(affichageDistLeven);
 		return tmp[size1][size2];
 	}
-	
+
 	private void lectureFichierModele(String fichierModele) throws IOException {
 		String st = "";
 		String[] separated;
@@ -331,7 +315,6 @@ public class apprentissage_HMM_discret {
 		String coltableau = br.readLine();
 		String[] separated2 = coltableau.split(tab);
 
-		
 		insertions = new HashMap<String, Integer>();
 		matriceTransition = new HashMap<>();
 		alignements = new HashMap<>();
@@ -356,7 +339,19 @@ public class apprentissage_HMM_discret {
 		System.out.println("Termine.");
 		br.close();
 	}
-	
-	
+
+	public static void main(String[] args) {
+		String modeleinit = args[0];
+		String donneesApp = args[1];
+		String modeleapp = args[2];
+
+		try {
+			System.setOut(new PrintStream(new File("apprentissage_HMM_discret.txt")));
+		} catch (FileNotFoundException e1) {
+			e1.printStackTrace();
+		}
+
+		new apprentissage_HMM_discret(modeleinit, donneesApp, modeleapp);
+	}
 
 }

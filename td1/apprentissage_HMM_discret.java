@@ -65,16 +65,19 @@ public class apprentissage_HMM_discret {
 		
 
 		
-		
+		double cpt = 0;
 		for(int i = 0; i<motsApp.size();i++){
 			String motTest = motsTest.get(i);
 			String motRef = motsRef.get(i);
 			String[] f1 = motTest.split(" ");
 			String[] f2 = motRef.split(" ");
+			
 			double a = levenshteinCalcul(f1, f2);
+			cpt += a;
 			System.out.println(motTest+" ->"+motRef+" = "+a);
 			
 		}
+		System.out.println(" Cout global : "+cpt);
 		
 		miseAJour();
 		ecrireFichierModele(modeleapp);
@@ -116,21 +119,23 @@ public class apprentissage_HMM_discret {
 			
 			for (String map3 : matriceTransition.keySet()) {
 				
-				somme += alignements.get(map).get(map3)+1;
-				
+				somme += alignements.get(map3).get(map)+1;
 				
 			}
+			
 			for (String map2 : matriceTransition.get(map).keySet()) {
 				double rapport = 0;
 				if(alignements.get(map).containsKey(map2)){
 					
-					if(alignements.get(map).get(map2) !=0.){
-						System.out.println("aligne "+map+" "+map2+" "+alignements.get(map).get(map2));
+					//if(alignements.get(map).get(map2) !=0.0){
+						System.out.println("aligne \""+map+"\" \""+map2+"\" "+alignements.get(map2).get(map));
 						System.out.println("somme "+somme);
 						System.out.println("-----------------------------");
-					}
-					rapport = alignements.get(map).get(map2)/somme;
+					//}
+					rapport = alignements.get(map).get(map2)+1/somme;
 					if(rapport==0)rapport = 0.001;
+					System.out.println("j'ai "+matriceTransition.get(map).get(map2));
+					System.out.println("je met "+rapport);
 					matriceTransition.get(map).put(map2,rapport);
 					///;
 				}else{
@@ -204,7 +209,7 @@ public class apprentissage_HMM_discret {
 		String modeleinit = args[0];
 		String donneesApp = args[1];
 		String modeleapp = args[2];
-		for (int i = 0; i < 1; i++) {
+		for (int i = 0; i < 10; i++) {
 			new apprentissage_HMM_discret(modeleinit, donneesApp, modeleapp);
 		}
 		
@@ -252,6 +257,7 @@ public class apprentissage_HMM_discret {
 				double omi = tmp[i - 1][j] + getComi();
 				double inser = tmp[i][j - 1] + getCins(f1[i - 1]);
 				double sub = tmp[i - 1][j - 1] + m;
+				System.out.println("Cout entre "+f1[i - 1]+" et "+f2[j - 1]+" :omi "+omi+" inser "+inser+" sub "+sub);
 				tmp[i][j] = Math.min(Math.min(omi, inser), sub);
 			}
 		}
@@ -290,7 +296,7 @@ public class apprentissage_HMM_discret {
 				i++;
 				affichageDistLeven += " s(" + f1[i - 1] + "=>" + f2[j - 1] + ")";
 				//System.out.println(" s(" + f1[i - 1] + "=>" + f2[j - 1] + ")");
-				alignements.get(f1[i-1]).put(f2[j-1],alignements.get(f1[i-1]).get(f2[j-1])+1);
+				alignements.get(f2[j-1]).put(f1[i-1],alignements.get(f2[j-1]).get(f1[i-1])+1);
 			//	System.out.println(" je met : "+alignements.get(f1[i-1]).get(f2[j-1]));
 				NSUB++;
 			} else if (min == haut) {

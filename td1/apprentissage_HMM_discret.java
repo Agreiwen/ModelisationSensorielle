@@ -37,7 +37,7 @@ public class apprentissage_HMM_discret {
 	
 	public apprentissage_HMM_discret(String modeleinit, String donneesApp, String modeleapp){
 		try {
-			System.setOut(new PrintStream(new File("reco_dist_levenshtein.txt")));
+			System.setOut(new PrintStream(new File("apprentissage_HMM_discret.txt")));
 		} catch (FileNotFoundException e1) {
 			e1.printStackTrace();
 		}
